@@ -1,8 +1,10 @@
 import json
 import pika
+from pika.exceptions import AMQPConnectionError
 import django
 import os
 import sys
+import time
 from django.core.mail import send_mail
 
 
@@ -59,13 +61,17 @@ def main():
 
 
 
-
-if __name__ == '__main__':
+while True:
     try:
-        main()
-    except KeyboardInterrupt:
-        print('Interrupted')
-        try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
+        if __name__ == '__main__':
+            try:
+                main()
+            except KeyboardInterrupt:
+                print('Interrupted')
+                try:
+                    sys.exit(0)
+                except SystemExit:
+                    os._exit(0)
+    except AMQPConnectionError:
+        print("Could not connect to RabbitMQ")
+        time.sleep(2.0)

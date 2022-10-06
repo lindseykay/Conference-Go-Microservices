@@ -4,7 +4,7 @@ import json
 
 # from events.api_views import ConferenceListEncoder
 from common.json import ModelEncoder
-from .models import Attendee, ConferenceVO
+from .models import Attendee, ConferenceVO, AccountVO
 
 # from events.models import Conference
 
@@ -31,6 +31,13 @@ class AttendeeDetailEncoder(ModelEncoder):
     encoders = {
         "conference": ConferenceVODetailEncoder(),
     }
+
+    def get_extra_data(self, o):
+        count = AccountVO.objects.filter(email=o.email).count()
+        if count > 0:
+            return {"has_account": True}
+        else:
+            return {"has_account": False}
 
 
 @require_http_methods(["GET", "POST"])
